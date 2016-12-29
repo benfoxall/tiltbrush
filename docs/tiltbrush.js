@@ -228,6 +228,7 @@ class Renderer {
       this.ctx.fillStyle = 'rgba(' + stroke.brush_color.map(c => Math.floor(c * 255)).join(', ') + ')'
 
       stroke.points.forEach( point => {
+        if(point.position[2] > 0)
         this.ctx.fillRect(
           point.position[0],
           -point.position[1],
