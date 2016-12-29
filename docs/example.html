@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <style media="screen">
+      canvas {background: #f5f5f5}
+    </style>
   </head>
   <body>
     <script src="jszip.js"></script>
@@ -24,6 +27,9 @@
         .data()
         .then(data => {
           console.log(data)
+
+          var renderer = new tiltbrush.Renderer()
+          renderer.setData(data)
         })
     </script>
   </body>

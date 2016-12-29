@@ -85,10 +85,7 @@ class Reader {
 
 class Sketch {
 
-  constructor() {
-    console.log("whoop!")
-
-  }
+  constructor() { }
 
   load(path) {
     this.loaded = fetch(path)
@@ -107,6 +104,10 @@ class Sketch {
       header_version: reader.getUint16(),
       reserved_1:     reader.getUint32(),
       reserved_2:     reader.getUint32()
+    }
+
+    if(this.header.sentinel != 'tilT') {
+      throw "File Reading Error (sentinel mismatch)"
     }
 
     this.zip = new JSZip()
@@ -148,10 +149,8 @@ class Sketch {
             const _stroke = {}
 
             _stroke.brush_index = reader.getInt32()
-            _stroke.brush_color = reader.getFloat32()
-            _stroke.brush_color = reader.getFloat32()
-            _stroke.brush_color = reader.getFloat32()
-            _stroke.brush_color = reader.getFloat32()
+            _stroke.brush_color =
+              [reader.getFloat32(), reader.getFloat32(), reader.getFloat32(), reader.getFloat32()]
             _stroke.brush_size  = reader.getFloat32()
 
 
@@ -204,6 +203,44 @@ class Sketch {
 
 }
 
+class Renderer {
+
+  constructor() {
+
+    const canvas = document.createElement('canvas')
+    const size = Math.min(window.innerHeight,window.innerWidth)
+    const ratio = window.devicePixelRatio || 1
+
+    canvas.width = canvas.height = size * ratio
+    canvas.style.width = canvas.style.height = size + 'px'
+
+    document.body.appendChild(canvas)
+
+    this.ctx = canvas.getContext('2d')
+
+    this.ctx.translate(size*ratio/2,size*ratio/2)
+    this.ctx.scale(15,15)
+
+  }
+
+  setData(data) {
+    data.strokes.forEach( stroke => {
+      this.ctx.fillStyle = 'rgba(' + stroke.brush_color.map(c => Math.floor(c * 255)).join(', ') + ')'
+
+      stroke.points.forEach( point => {
+        this.ctx.fillRect(
+          point.position[0],
+          -point.position[1],
+          .1,.1
+        )
+      })
+
+    })
+  }
+
+}
+
 exports.Sketch = Sketch;
+exports.Renderer = Renderer;
 
 }((this.tiltbrush = this.tiltbrush || {})));
