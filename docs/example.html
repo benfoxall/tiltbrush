@@ -8,10 +8,22 @@
     <script src="jszip.js"></script>
     <script src="tiltbrush.js"></script>
     <script type="text/javascript">
-      tiltbrush
-        .read('hello-world.tilt')
-        .then(geom => {
-          console.log(geom)
+      var sketch = new tiltbrush.Sketch()
+
+      sketch.load('hello-world.tilt')
+
+      sketch
+        .thumbnail()
+        .then(dataUri => {
+          const img = new Image()
+          img.src = dataUri
+          document.body.appendChild(img)
+        })
+
+      sketch
+        .data()
+        .then(data => {
+          console.log(data)
         })
     </script>
   </body>
